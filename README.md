@@ -44,6 +44,10 @@ export default [...amuri, ...typeAware];
 
 ## Publish
 
+Bump `version` in `package.json`, then push a tag; the `Publish` workflow runs tests and publishes
+to GitHub Packages with the built-in `GITHUB_TOKEN`:
+
 ```sh
-npm publish   # needs a token with write:packages
+npm version patch   # creates commit + tag vX.Y.Z
+git push --follow-tags
 ```
