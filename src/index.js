@@ -1,7 +1,5 @@
 import tseslint from 'typescript-eslint';
-import pluginVue from 'eslint-plugin-vue';
 import importPlugin from 'eslint-plugin-import';
-import vueParser from 'vue-eslint-parser';
 
 import plugin from './plugin.js';
 
@@ -21,40 +19,13 @@ export const typescript = [
   },
 ];
 
-/** Vue SFC parsing (TS in <script>) + template rules. */
-export const vue = [
-  {
-    files: ['**/*.vue'],
-    plugins: { vue: pluginVue, '@typescript-eslint': tseslint.plugin },
-    languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        parser: tseslint.parser,
-        sourceType: 'module',
-        extraFileExtensions: ['.vue'],
-      },
-    },
-    rules: {
-      'vue/singleline-html-element-content-newline': 'off', // handled by prettier
-      'vue/html-closing-bracket-newline': 'off', // handled by prettier
-      'vue/component-name-in-template-casing': ['error', 'PascalCase'], // auto-fix
-      'vue/no-empty-component-block': 'error', // auto-fix
-      'vue/block-order': ['error', { order: ['script', 'template', 'style'] }], // auto-fix
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
-      ],
-    },
-  },
-];
-
 /**
  * Rules that need type information (projectService).
  * Opt-in: the consumer must have a tsconfig covering the linted files.
  */
 export const typeAware = [
   {
-    files: ['**/src/**/*.ts', '**/src/**/*.tsx', '**/src/**/*.vue'],
+    files: ['**/src/**/*.ts', '**/src/**/*.tsx'],
     plugins: { '@typescript-eslint': tseslint.plugin },
     languageOptions: { parserOptions: { projectService: true } },
     rules: {
@@ -133,4 +104,4 @@ export const style = [
 export { plugin };
 
 /** Default: everything except type-aware rules. */
-export default [...typescript, ...vue, ...style];
+export default [...typescript, ...style];
