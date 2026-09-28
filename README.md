@@ -1,6 +1,6 @@
 # @amurisavemylifee/eslint-config
 
-Shared ESLint flat config (ESLint 9): TypeScript, Vue, import/export layout, plus 7 custom rules
+Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 7 custom rules
 (plugin `amuri`, taken from `gta-rp-server`, branch `refactor/architecture`).
 
 | Custom rule | What it does |
@@ -22,7 +22,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, Vue, import/export layout, plu
 ```
 
 ```sh
-npm i -D @amurisavemylifee/eslint-config eslint typescript-eslint eslint-plugin-vue eslint-plugin-import vue-eslint-parser
+npm i -D @amurisavemylifee/eslint-config eslint typescript-eslint eslint-plugin-import
 ```
 
 `eslint.config.js`:
@@ -33,7 +33,7 @@ import amuri from '@amurisavemylifee/eslint-config';
 export default [...amuri];
 ```
 
-Parts: `typescript`, `vue`, `style` (import/export + custom rules), and the opt-in `typeAware`
+Parts: `typescript`, `style` (import/export + custom rules), and the opt-in `typeAware`
 (`consistent-type-exports`, needs a tsconfig covering the files):
 
 ```js
