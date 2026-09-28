@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ESLint } from 'eslint';
 
-import config, { typescript, vue, style } from '../src/index.js';
+import config, { typescript, style } from '../src/index.js';
 
 const run = async (code, filePath, fix = false) => {
   const eslint = new ESLint({ overrideConfigFile: true, overrideConfig: config, fix });
@@ -12,8 +12,8 @@ const run = async (code, filePath, fix = false) => {
 
 const ids = async (code, filePath = 'a.ts') => (await run(code, filePath)).ids;
 
-test('default is typescript + vue + style', () => {
-  assert.equal(config.length, typescript.length + vue.length + style.length);
+test('default is typescript + style', () => {
+  assert.equal(config.length, typescript.length + style.length);
 });
 
 test('clean file has no messages', async () => {
@@ -62,15 +62,4 @@ test('adjacent-same-path', async () => {
 test('reexports-before-local', async () => {
   const src = "const x = 1;\n\nexport { x };\n\nexport { y } from './m';\n";
   assert.ok((await ids(src)).includes('amuri/reexports-before-local'));
-});
-
-test('vue: flags wrong block order and empty block', async () => {
-  const found = await ids('<template><div /></template>\n<script lang="ts">export default {};</script>\n<style></style>\n', 'a.vue');
-  assert.ok(found.includes('vue/block-order'));
-  assert.ok(found.includes('vue/no-empty-component-block'));
-});
-
-test('vue: flags non-PascalCase component in template', async () => {
-  const found = await ids('<script setup lang="ts">import MyComp from "./MyComp.vue";\nexport const c = MyComp;</script>\n<template><my-comp /></template>\n', 'a.vue');
-  assert.ok(found.includes('vue/component-name-in-template-casing'));
 });
