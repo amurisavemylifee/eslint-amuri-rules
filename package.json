@@ -1,6 +1,6 @@
 {
   "name": "@amurisavemylifee/eslint-config",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared ESLint flat config (TypeScript, import/export rules)",
   "type": "module",
   "main": "src/index.js",
@@ -8,7 +8,8 @@
     ".": "./src/index.js"
   },
   "files": [
-    "src"
+    "src",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test test/*.test.js"
@@ -18,9 +19,10 @@
     "url": "git+https://github.com/amurisavemylifee/eslint-amuri-rules.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "provenance": true
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=22"
   },

@@ -29,12 +29,17 @@ export default {
       map.get(module)[key].push(node);
     }
 
+    const isNamed = (s) => s.type === 'ImportSpecifier' || s.type === 'ExportSpecifier';
+
+    // Only named specifiers can be moved into braces: default/namespace imports are left alone.
     function mergeIntoFirst(fixer, first, dup) {
+      if (first.specifiers.length === 0 || !first.specifiers.some(isNamed)) return null;
+
+      if (dup.specifiers.length === 0 || !dup.specifiers.every(isNamed)) return null;
+
       const specifiers = dup.specifiers.map((s) => src.getText(s)).join(', ');
 
-      const closing = src.getLastToken(first, (t) => t.value === '}');
-
-      const insertion = first.specifiers.length > 0 ? `, ${specifiers}` : specifiers;
+      const lastNamed = first.specifiers.filter(isNamed).pop();
 
       // Remove duplicate including its leading newline
       const tokenBefore = src.getTokenBefore(dup, { includeComments: false });
@@ -42,7 +47,7 @@ export default {
       const removeStart = tokenBefore ? tokenBefore.range[1] : dup.range[0];
 
       return [
-        fixer.insertTextBefore(closing, insertion),
+        fixer.insertTextAfter(lastNamed, `, ${specifiers}`),
         fixer.removeRange([removeStart, dup.range[1]]),
       ];
     }

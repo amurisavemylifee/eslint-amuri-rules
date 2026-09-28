@@ -1,7 +1,7 @@
 // Prevents inline `type` keyword in import/export specifiers.
 // Forces dedicated statements instead:
-//   import { type Foo }   → import type { Foo }
-//   export { type Foo }   → export type { Foo }
+//   import { a, type Foo }   → import { a };  import type { Foo };
+//   export { a, type Foo }   → export { a };  export type { Foo };
 export default {
   meta: {
     type: 'suggestion',
@@ -15,38 +15,62 @@ export default {
   create(context) {
     const src = context.sourceCode ?? context.getSourceCode();
 
-    function checkSpecifiers(specifiers, messageId) {
-      for (const specifier of specifiers) {
-        if (specifier.type !== 'ImportSpecifier' && specifier.type !== 'ExportSpecifier') continue;
+    const isInlineType = (s) =>
+      (s.type === 'ImportSpecifier' || s.type === 'ExportSpecifier') &&
+      (s.importKind ?? s.exportKind) === 'type';
 
-        if (!specifier.importKind && !specifier.exportKind) continue;
+    const bare = (s) => src.getText(s).replace(/^type\s+/, '');
 
-        const kind = specifier.importKind ?? specifier.exportKind;
+    // Splits the declaration into a value statement and a type statement.
+    function rewrite(fixer, node, keyword) {
+      if (node.attributes?.length) return null;
 
-        if (kind !== 'type') continue;
+      const types = node.specifiers.filter(isInlineType).map(bare);
 
+      const rest = node.specifiers.filter((s) => !isInlineType(s));
+
+      const from = node.source ? ` from ${src.getText(node.source)}` : '';
+
+      const defaultSpecifier = rest.find((s) => s.type === 'ImportDefaultSpecifier');
+
+      const named = rest.filter((s) => s !== defaultSpecifier).map((s) => src.getText(s));
+
+      const valueParts = [
+        defaultSpecifier && src.getText(defaultSpecifier),
+        named.length > 0 && `{ ${named.join(', ')} }`,
+      ].filter(Boolean);
+
+      const statements = [];
+
+      if (valueParts.length > 0) statements.push(`${keyword} ${valueParts.join(', ')}${from};`);
+
+      statements.push(`${keyword} type { ${types.join(', ')} }${from};`);
+
+      return fixer.replaceText(node, statements.join('\n'));
+    }
+
+    function check(node, keyword, messageId) {
+      for (const specifier of node.specifiers.filter(isInlineType)) {
         context.report({
           node: specifier,
           messageId,
           data: { name: specifier.local.name },
-          fix(fixer) {
-            // Remove the `type ` keyword from the specifier
-            const typeToken = src.getFirstToken(specifier);
-
-            const nextToken = src.getTokenAfter(typeToken);
-
-            return fixer.removeRange([typeToken.range[0], nextToken.range[0]]);
-          },
+          // Every report of one declaration carries the same whole-declaration fix.
+          fix: (fixer) => rewrite(fixer, node, keyword),
         });
       }
     }
 
     return {
       ImportDeclaration(node) {
-        checkSpecifiers(node.specifiers, 'inlineTypeImport');
+        if (node.importKind === 'type') return;
+
+        check(node, 'import', 'inlineTypeImport');
       },
       ExportNamedDeclaration(node) {
-        checkSpecifiers(node.specifiers, 'inlineTypeExport');
+        if (node.exportKind === 'type') return;
+
+        check(node, 'export', 'inlineTypeExport');
       },
     };
   },

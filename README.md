@@ -15,12 +15,6 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 7 c
 
 ## Usage
 
-`.npmrc` in the consuming project (GitHub Packages, after publishing):
-
-```
-@amurisavemylifee:registry=https://npm.pkg.github.com
-```
-
 ```sh
 npm i -D @amurisavemylifee/eslint-config eslint typescript-eslint eslint-plugin-import
 ```
@@ -45,7 +39,7 @@ export default [...amuri, ...typeAware];
 ## Publish
 
 Bump `version` in `package.json`, then push a tag; the `Publish` workflow runs tests and publishes
-to GitHub Packages with the built-in `GITHUB_TOKEN`:
+to npmjs.com (secret `NPM_TOKEN`, with provenance):
 
 ```sh
 npm version patch   # creates commit + tag vX.Y.Z
