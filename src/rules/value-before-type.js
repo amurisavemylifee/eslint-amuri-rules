@@ -68,6 +68,10 @@ export default {
       },
 
       ExportNamedDeclaration(node) {
+        // Inline declarations (`export interface A {}`, `export function f() {}`) are not
+        // `export { }` blocks: moving them would reorder code instead of export statements.
+        if (node.declaration) return;
+
         if (node.source) {
           track(reexports, node.source.value, node.exportKind, node);
         } else {

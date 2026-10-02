@@ -165,3 +165,10 @@ test('as-const-upper-snake: both directions', async () => {
   assert.equal(await count('const MAX_RETRIES = 3 as const;\n\nexport { MAX_RETRIES };\n'), 0);
   assert.equal(await count('const { a } = { a: 1 };\n\nexport { a };\n'), 0);
 });
+
+test('value-before-type: inline type declarations are not moved below inline value declarations', async () => {
+  const src = 'export type TClient = string;\n\nexport function create(): TClient {\n  return "a";\n}\n';
+  assert.ok(!(await ids(src)).includes('amuri/value-before-type'));
+  const { output } = await run(src, 'a.ts', true);
+  assert.equal(output, 'type TClient = string;\n\nfunction create(): TClient {\n  return "a";\n}\n\nexport { create };\n\nexport type { TClient };\n');
+});
