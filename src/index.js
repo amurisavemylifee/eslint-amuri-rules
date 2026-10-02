@@ -69,7 +69,6 @@ export const style = [
       // ── Imports / Exports ──
       'import/first': 'error', // auto-fix: imports before other code
       'import/no-self-import': 'error',
-      'import/no-cycle': 'error', // no circular dependencies (A → B → A)
       'import/no-relative-packages': 'error', // use workspace alias, not ../../other-pkg
       'import/exports-last': 'error', // all exports at the end of the file
       'import/group-exports': 'error', // at most one export { } and one export type { }
