@@ -11,6 +11,9 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 7 c
 | `amuri/no-duplicate-same-kind` | one `import {}` + one `import type {}` per module (replaces `import/no-duplicates`) |
 | `amuri/no-inline-type-specifier` | `import type { A }` instead of `import { type A }` |
 | `amuri/reexports-before-local` | `export {} from` before local `export {}` |
+| `amuri/as-const-upper-snake` | `as const` constants are `UPPER_SNAKE_CASE`; `UPPER_SNAKE_CASE` objects/arrays are `as const` (primitives need no `as const`) |
+| `amuri/sorted-specifiers` | alphabetical order inside `import { }` / `export { }` (auto-fix) |
+| `amuri/type-name-prefix` | interfaces are `IFoo`, type aliases are `TFoo`, enums are `EFoo`, generic parameters are `T` / `TFoo` |
 | `amuri/value-before-type` | value import/export before type one for the same path |
 
 ## Usage

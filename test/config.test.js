@@ -50,7 +50,7 @@ test('no-inline-export fix: extends existing blocks, keeps types apart, no lost 
     '',
   ].join('\n');
   const { output } = await run(src, 'a.ts', true);
-  assert.ok(output.includes('export { z, f, C, E };'), output);
+  assert.ok(output.includes('export { C, E, f, z };'), output);
   assert.ok(output.includes('export type { I, T };'), output);
   assert.ok(!/^export (function|class|enum|interface) |^export type \w+ =/m.test(output), output);
 });
@@ -128,4 +128,40 @@ test('adjacent-same-path', async () => {
 test('reexports-before-local', async () => {
   const src = "const x = 1;\n\nexport { x };\n\nexport { y } from './m';\n";
   assert.ok((await ids(src)).includes('amuri/reexports-before-local'));
+});
+
+test('type-name-prefix: interface needs I, type alias T, enum E', async () => {
+  const bad = 'interface Foo {}\n\ntype Bar = string;\n\ninterface Ifoo {}\n\nenum Dir { Up }\n\nexport { Dir };\nexport type { Foo, Bar, Ifoo };\n';
+  const found = (await ids(bad)).filter((id) => id === 'amuri/type-name-prefix');
+  assert.equal(found.length, 4);
+  const ok = 'interface IFoo {}\n\ntype TBar = string;\n\nenum EDir { Up }\n\nexport { EDir };\nexport type { IFoo, TBar };\n';
+  assert.ok(!(await ids(ok)).includes('amuri/type-name-prefix'));
+});
+
+test('sorted-specifiers: flags and autofixes imports and exports', async () => {
+  const src = "import { b, a } from './m';\n\nexport { b, a };\n";
+  assert.ok((await ids(src)).includes('amuri/sorted-specifiers'));
+  const { output } = await run(src, 'a.ts', true);
+  assert.equal(output, "import { a, b } from './m';\n\nexport { a, b };\n");
+  const ok = "import { a, B } from './m';\n\nexport { a, B };\n";
+  assert.ok(!(await ids(ok)).includes('amuri/sorted-specifiers'));
+});
+
+test('type-name-prefix: generic parameters need T or T + Uppercase', async () => {
+  const bad = 'export const f = <Key, U>(a: Key, b: U) => [a, b];\n\nexport type TM<TK extends string> = { [P in TK]: P };\n';
+  const found = (await ids(bad)).filter((id) => id === 'amuri/type-name-prefix');
+  assert.equal(found.length, 2);
+  const ok = 'const f = <T, TKey extends string>(a: T, b: TKey) => [a, b];\n\ntype TM<TK extends string> = { [TP in TK]: TP };\n\nexport { f };\nexport type { TM };\n';
+  assert.deepEqual(await ids(ok), []);
+});
+
+test('as-const-upper-snake: both directions', async () => {
+  const count = async (code) => (await ids(code)).filter((id) => id === 'amuri/as-const-upper-snake').length;
+  assert.equal(await count("const dirs = { up: 'UP' } as const;\n\nexport { dirs };\n"), 1);
+  assert.equal(await count("const DIRS = { up: 'UP' };\n\nexport { DIRS };\n"), 1);
+  assert.equal(await count('const LIST = [1, 2];\n\nexport { LIST };\n'), 1);
+  assert.equal(await count("const MAX = 3;\nconst NAME = 'a';\n\nexport { MAX, NAME };\n"), 0);
+  assert.equal(await count("const DIRS = { up: 'UP' } as const satisfies object;\n\nexport { DIRS };\n"), 0);
+  assert.equal(await count('const MAX_RETRIES = 3 as const;\n\nexport { MAX_RETRIES };\n'), 0);
+  assert.equal(await count('const { a } = { a: 1 };\n\nexport { a };\n'), 0);
 });

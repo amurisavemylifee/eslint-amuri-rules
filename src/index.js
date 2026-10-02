@@ -69,6 +69,7 @@ export const style = [
       // ── Imports / Exports ──
       'import/first': 'error', // auto-fix: imports before other code
       'import/no-self-import': 'error',
+      'import/no-cycle': 'error', // no circular dependencies (A → B → A)
       'import/no-relative-packages': 'error', // use workspace alias, not ../../other-pkg
       'import/exports-last': 'error', // all exports at the end of the file
       'import/group-exports': 'error', // at most one export { } and one export type { }
@@ -94,6 +95,12 @@ export const style = [
       'amuri/no-inline-type-specifier': 'error',
       // re-exports (export { } from '...') before local exports (export { })
       'amuri/reexports-before-local': 'error',
+      // specifiers inside import { } / export { } sorted alphabetically (auto-fix)
+      'amuri/sorted-specifiers': 'error',
+      // `as const` constants are UPPER_SNAKE_CASE; UPPER_SNAKE_CASE object/array constants are `as const`
+      'amuri/as-const-upper-snake': 'error',
+      // interface names start with I, type aliases with T, enums with E, generics with T (IFoo, TFoo, EFoo, T / TKey)
+      'amuri/type-name-prefix': 'error',
       // for the same path: value import/export before type import/export
       'amuri/value-before-type': 'error',
     },
