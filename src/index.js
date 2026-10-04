@@ -26,7 +26,7 @@ export const typescript = [
 export const typeAware = [
   {
     files: ['**/src/**/*.ts', '**/src/**/*.tsx'],
-    plugins: { '@typescript-eslint': tseslint.plugin },
+    plugins: { '@typescript-eslint': tseslint.plugin, amuri: plugin },
     languageOptions: { parserOptions: { projectService: true } },
     rules: {
       // splits mixed exports into export type {} + export {}
@@ -34,6 +34,8 @@ export const typeAware = [
         'error',
         { fixMixedExportsWithInlineTypeSpecifier: false },
       ],
+      // boolean variables/params/properties start with is/has/can/should/will/did/does/are/was/were
+      'amuri/boolean-name-prefix': 'error',
     },
   },
 ];
@@ -83,8 +85,6 @@ export const style = [
       ],
 
       // ── Custom rules ──
-      // boolean variables/params/properties start with is/has/can/should/will/did/does/are/was/were
-      'amuri/boolean-name-prefix': 'error',
       // class names are PascalCase
       'amuri/class-pascal-case': 'error',
       // braces for all if-bodies except bare `return;` guard clauses (auto-fix)

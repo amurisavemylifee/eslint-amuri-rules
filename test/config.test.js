@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ESLint } from 'eslint';
 
-import config, { typescript, style } from '../src/index.js';
+import config, { typescript, typeAware, style } from '../src/index.js';
 
 const run = async (code, filePath, fix = false) => {
   const eslint = new ESLint({ overrideConfigFile: true, overrideConfig: config, fix });
@@ -255,18 +255,47 @@ test('class-pascal-case: class names must be PascalCase', async () => {
   assert.equal(await found('class UserService {}\n\nclass HTTPClient {}\n\nconst A = class {};\n\nexport { A };\n'), 0);
 });
 
-test('boolean-name-prefix: booleans need is/has/can/should... prefix', async () => {
-  const found = async (code) => (await ids(code)).filter((id) => id === 'amuri/boolean-name-prefix').length;
+test('boolean-name-prefix: type-aware only, inactive without type info', async () => {
+  const dir = mkdtempSync(join(process.cwd(), '.tmp-typed-'));
 
-  assert.equal(await found('const active = true;\n\nexport { active };\n'), 1);
-  assert.equal(await found('const empty = items.length === 0;\n\nexport { empty };\n'), 1);
-  assert.equal(await found('const ready = !x;\n\nexport { ready };\n'), 1);
-  assert.equal(await found('const loaded: boolean = load();\n\nexport { loaded };\n'), 1);
-  assert.equal(await found('function f(visible: boolean, open = false) {}\n\nexport { f };\n'), 2);
-  assert.equal(await found('interface IA { visible: boolean }\n'), 1);
-  assert.equal(await found('const isActive = true;\n\nconst hasItems = a > 1;\n\nconst IS_DEBUG = false;\n\nexport { hasItems, IS_DEBUG, isActive };\n'), 0);
-  assert.equal(await found('const island = 1;\n\nconst issue = true;\n\nexport { island, issue };\n'), 1);
-  assert.equal(await found('const x = foo();\n\nexport { x };\n'), 0);
+  try {
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'tsconfig.json'), JSON.stringify({ compilerOptions: { strict: true }, include: ['src'] }));
+
+    const code = [
+      'declare function check(): boolean;',
+      'declare const isMaybe: boolean | undefined;',
+      '',
+      'const loaded = check();',
+      '',
+      'const shown = isMaybe;',
+      '',
+      'const isOk = check();',
+      '',
+      'const count = 1;',
+      '',
+      'function f(open: boolean, name: string) {}',
+      '',
+      'export { count, f, isOk, loaded, shown };',
+      '',
+    ].join('\n');
+    const file = join(dir, 'src', 'a.ts');
+
+    writeFileSync(file, code);
+
+    const eslint = new ESLint({
+      overrideConfigFile: true,
+      overrideConfig: [...typescript, ...typeAware, ...style],
+      cwd: dir,
+    });
+    const [result] = await eslint.lintText(code, { filePath: file });
+    const hits = result.messages.filter((m) => m.ruleId === 'amuri/boolean-name-prefix');
+
+    assert.equal(hits.length, 3, JSON.stringify(result.messages.map((m) => [m.ruleId, m.message])));
+    assert.equal((await ids(code)).filter((id) => id === 'amuri/boolean-name-prefix').length, 0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('padding: single-line declarations of one kind may be adjacent, multiline ones need blank lines', async () => {
