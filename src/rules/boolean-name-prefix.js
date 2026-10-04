@@ -10,18 +10,7 @@
 // OK:    const isActive = true;
 // OK:    const hasItems = items.length > 0;
 // OK:    const IS_DEBUG = false;
-import ts from 'typescript';
-
-const PREFIXES = ['is', 'has', 'can', 'should', 'will', 'did', 'does', 'are', 'was', 'were'];
-const PREFIXED = new RegExp(`^_*(?:${PREFIXES.join('|')})(?:[A-Z0-9]|$)`);
-const PREFIXED_UPPER = new RegExp(`^_*(?:${PREFIXES.join('|').toUpperCase()})(?:_|$)`);
-const NULLISH = ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void;
-
-const isBooleanType = (type) => {
-  const parts = (type.isUnion() ? type.types : [type]).filter((part) => (part.flags & NULLISH) === 0);
-
-  return parts.length > 0 && parts.every((part) => (part.flags & ts.TypeFlags.BooleanLike) !== 0);
-};
+import { booleanHint, hasBooleanPrefix, isBooleanType, PREFIX_LIST } from '../utils/boolean.js';
 
 export default {
   meta: {
@@ -37,18 +26,17 @@ export default {
 
     if (!checker) return {};
 
-    const prefixes = PREFIXES.join(', ');
-
     const check = (idNode) => {
       const { name } = idNode;
 
-      if (PREFIXED.test(name) || PREFIXED_UPPER.test(name)) return;
+      if (hasBooleanPrefix(name)) return;
       if (!isBooleanType(checker.getTypeAtLocation(services.esTreeNodeToTSNodeMap.get(idNode)))) return;
 
-      const bare = name.replace(/^_+/, '');
-      const hint = /^[A-Z0-9_]+$/.test(bare) ? `IS_${bare}` : `is${bare[0].toUpperCase()}${bare.slice(1)}`;
-
-      context.report({ node: idNode, messageId: 'booleanPrefix', data: { name, prefixes, hint } });
+      context.report({
+        node: idNode,
+        messageId: 'booleanPrefix',
+        data: { name, prefixes: PREFIX_LIST, hint: booleanHint(name) },
+      });
     };
 
     const checkParam = (param) => {

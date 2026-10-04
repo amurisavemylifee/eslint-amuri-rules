@@ -36,6 +36,10 @@ export const typeAware = [
       ],
       // boolean variables/params/properties start with is/has/can/should/will/did/does/are/was/were
       'amuri/boolean-name-prefix': 'error',
+      // functions returning boolean start with is/has/can/... too
+      'amuri/boolean-function-prefix': 'error',
+      // no positional boolean parameters, pass an options object
+      'amuri/no-boolean-param': 'error',
     },
   },
 ];
@@ -91,6 +95,8 @@ export const style = [
       'amuri/curly-except-return': 'error',
       // index files contain only imports and re-exports, no logic
       'amuri/index-only-reexports': 'error',
+      // at most 3 function parameters, more — an options object
+      'amuri/max-function-params': 'error',
       // folders with an index file are imported through it, not via internal files
       'amuri/no-barrel-deep-import': 'error',
       // forbids inline exports, use export { } blocks (auto-fix strips `export`)

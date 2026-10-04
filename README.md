@@ -6,6 +6,9 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 14 
 | Custom rule | What it does |
 | --- | --- |
 | `amuri/boolean-name-prefix` | **type-aware only** (`typeAware` config, inactive without type info): variables, params and properties of type `boolean` start with `is`/`has`/`can`/`should`/`will`/`did`/`does`/`are`/`was`/`were` |
+| `amuri/boolean-function-prefix` | **type-aware only**: functions/methods returning `boolean` (or a type predicate) start with `is`/`has`/`can`/... |
+| `amuri/no-boolean-param` | **type-aware only**: no positional `boolean` parameters, pass an options object |
+| `amuri/max-function-params` | at most 3 function parameters (option `{ max }`), more — an options object |
 | `amuri/class-pascal-case` | class names are `PascalCase` (no underscores, `$`, or lowercase start) |
 | `amuri/curly-except-return` | braces on every `if` body except bare `return;` |
 | `amuri/index-only-reexports` | `index.*` files may only contain imports and re-exports, no logic |

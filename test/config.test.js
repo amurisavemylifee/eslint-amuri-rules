@@ -298,6 +298,83 @@ test('boolean-name-prefix: type-aware only, inactive without type info', async (
   }
 });
 
+const typedFound = async (code, ruleId) => {
+  const dir = mkdtempSync(join(process.cwd(), '.tmp-typed-'));
+
+  try {
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'tsconfig.json'), JSON.stringify({ compilerOptions: { strict: true }, include: ['src'] }));
+
+    const file = join(dir, 'src', 'a.ts');
+
+    writeFileSync(file, code);
+
+    const eslint = new ESLint({ overrideConfigFile: true, overrideConfig: [...typescript, ...typeAware, ...style], cwd: dir });
+    const [result] = await eslint.lintText(code, { filePath: file });
+    const count = (list) => list.filter((m) => m.ruleId === ruleId).length;
+    const plain = await ids(code);
+
+    return { typed: count(result.messages), untyped: plain.filter((id) => id === ruleId).length };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+};
+
+test('boolean-function-prefix: boolean-returning functions need a prefix (type-aware)', async () => {
+  const code = [
+    'function active(): boolean { return true; }',
+    '',
+    'const empty = (list: string[]) => list.length === 0;',
+    '',
+    'const isOk = () => true;',
+    '',
+    'const load = async () => true;',
+    '',
+    'const count = () => 1;',
+    '',
+    'const o = { ready() { return false; }, hasX: () => true };',
+    '',
+    'class A { valid(): boolean { return true; } }',
+    '',
+    'export { A, active, count, empty, isOk, load, o };',
+    '',
+  ].join('\n');
+
+  assert.deepEqual(await typedFound(code, 'amuri/boolean-function-prefix'), { typed: 4, untyped: 0 });
+});
+
+test('no-boolean-param: positional booleans are forbidden (type-aware)', async () => {
+  const code = [
+    'function f(a: string, compact: boolean) {}',
+    '',
+    'const g = (flag?: boolean) => flag;',
+    '',
+    'const h = (a: string, options: { compact: boolean }) => options;',
+    '',
+    'export { f, g, h };',
+    '',
+  ].join('\n');
+
+  assert.deepEqual(await typedFound(code, 'amuri/no-boolean-param'), { typed: 2, untyped: 0 });
+});
+
+test('max-function-params: more than 3 params flagged, option changes the limit', async () => {
+  const found = async (code) => (await ids(code)).filter((id) => id === 'amuri/max-function-params').length;
+
+  assert.equal(await found('function f(a: number, b: number, c: number, d: number) {}\n\nexport { f };\n'), 1);
+  assert.equal(await found('const f = (a: number, b: number, c: number, d: number) => a;\n\nexport { f };\n'), 1);
+  assert.equal(await found('function f(a: number, b: number, c: number) {}\n\nexport { f };\n'), 0);
+  assert.equal(await found('function f(this: Window, a: number, b: number, c: number) {}\n\nexport { f };\n'), 0);
+
+  const eslint = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig: [...typescript, { plugins: { amuri: (await import('../src/index.js')).plugin }, rules: { 'amuri/max-function-params': ['error', { max: 1 }] } }],
+  });
+  const [result] = await eslint.lintText('function f(a: number, b: number) {}\n\nexport { f };\n', { filePath: 'a.ts' });
+
+  assert.equal(result.messages.length, 1);
+});
+
 test('padding: single-line declarations of one kind may be adjacent, multiline ones need blank lines', async () => {
   const found = async (code) =>
     (await ids(code)).filter((id) => id === 'amuri/padding-line-between-statements').length;
