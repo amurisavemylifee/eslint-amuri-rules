@@ -212,3 +212,37 @@ test('no-barrel-deep-import: relative imports into a folder with index must go t
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('no-barrel-deep-import: aliases option resolves aliased paths', async () => {
+  const root = mkdtempSync(join(process.cwd(), 'test', '.barrel-'));
+
+  try {
+    mkdirSync(join(root, 'src/feature'), { recursive: true });
+    mkdirSync(join(root, 'src/app'), { recursive: true });
+    writeFileSync(join(root, 'src/feature/index.ts'), '');
+
+    const rel = root.slice(process.cwd().length + 1);
+    const aliases = { '@': `${rel}/src`, '@app/': `${rel}/src/app` };
+    const eslint = new ESLint({
+      overrideConfigFile: true,
+      overrideConfig: [...config, { rules: { 'amuri/no-barrel-deep-import': ['error', { aliases }] } }],
+    });
+    const has = async (code, file = 'src/app/main.ts') => {
+      const [result] = await eslint.lintText(code, { filePath: join(root, file) });
+
+      return result.messages.some((m) => m.ruleId === 'amuri/no-barrel-deep-import');
+    };
+
+    assert.ok(await has("import { a } from '@/feature/internal';\n\nexport { a };\n"));
+    assert.ok(!(await has("import { a } from '@/feature';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from '@/feature/index';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from '@/other/x';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from '@foo/feature/internal';\n\nexport { a };\n")));
+    // inside the aliased folder itself
+    assert.ok(!(await has("import { a } from '@/feature/internal';\n\nexport { a };\n", 'src/feature/x.ts')));
+    // without the option aliases are ignored
+    assert.ok(!(await ids("import { a } from '@/feature/internal';\n\nexport { a };\n", join(root, 'src/app/main.ts'))).includes('amuri/no-barrel-deep-import'));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
