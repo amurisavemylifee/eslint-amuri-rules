@@ -84,6 +84,8 @@ export const style = [
       // ── Custom rules ──
       // braces for all if-bodies except bare `return;` guard clauses (auto-fix)
       'amuri/curly-except-return': 'error',
+      // index files contain only imports and re-exports, no logic
+      'amuri/index-only-reexports': 'error',
       // forbids inline exports, use export { } blocks (auto-fix strips `export`)
       'amuri/no-inline-export': 'error',
       // imports/re-exports from the same path must be adjacent

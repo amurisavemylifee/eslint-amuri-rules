@@ -172,3 +172,11 @@ test('value-before-type: inline type declarations are not moved below inline val
   const { output } = await run(src, 'a.ts', true);
   assert.equal(output, 'type TClient = string;\n\nfunction create(): TClient {\n  return "a";\n}\n\nexport { create };\n\nexport type { TClient };\n');
 });
+
+test('index-only-reexports: index files allow only imports and re-exports', async () => {
+  const ok = "'use client';\n\nimport { a } from './a';\n\nexport * from './b';\nexport { c } from './c';\nexport { a };\n";
+  assert.ok(!(await ids(ok, 'index.ts')).includes('amuri/index-only-reexports'));
+  assert.ok((await ids('const a = 1;\n\nexport { a };\n', 'index.ts')).includes('amuri/index-only-reexports'));
+  assert.ok((await ids('export default 1;\n', 'index.ts')).includes('amuri/index-only-reexports'));
+  assert.ok(!(await ids('const a = 1;\n\nexport { a };\n', 'a.ts')).includes('amuri/index-only-reexports'));
+});

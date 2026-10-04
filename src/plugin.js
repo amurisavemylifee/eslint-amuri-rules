@@ -1,6 +1,7 @@
 import adjacentSamePath from './rules/adjacent-same-path.js';
 import asConstUpperSnake from './rules/as-const-upper-snake.js';
 import curlyExceptReturn from './rules/curly-except-return.js';
+import indexOnlyReexports from './rules/index-only-reexports.js';
 import noDuplicateSameKind from './rules/no-duplicate-same-kind.js';
 import noInlineExport from './rules/no-inline-export.js';
 import noInlineTypeSpecifier from './rules/no-inline-type-specifier.js';
@@ -14,6 +15,7 @@ export default {
     'adjacent-same-path': adjacentSamePath,
     'as-const-upper-snake': asConstUpperSnake,
     'curly-except-return': curlyExceptReturn,
+    'index-only-reexports': indexOnlyReexports,
     'no-duplicate-same-kind': noDuplicateSameKind,
     'no-inline-export': noInlineExport,
     'no-inline-type-specifier': noInlineTypeSpecifier,

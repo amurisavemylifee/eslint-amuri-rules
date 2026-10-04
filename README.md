@@ -6,6 +6,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 7 c
 | Custom rule | What it does |
 | --- | --- |
 | `amuri/curly-except-return` | braces on every `if` body except bare `return;` |
+| `amuri/index-only-reexports` | `index.*` files may only contain imports and re-exports, no logic |
 | `amuri/no-inline-export` | no `export const/function/...`, use `export { }` blocks |
 | `amuri/adjacent-same-path` | imports/re-exports from one path stay adjacent |
 | `amuri/no-duplicate-same-kind` | one `import {}` + one `import type {}` per module (replaces `import/no-duplicates`) |
