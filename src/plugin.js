@@ -1,5 +1,6 @@
 import adjacentSamePath from './rules/adjacent-same-path.js';
 import asConstUpperSnake from './rules/as-const-upper-snake.js';
+import booleanNamePrefix from './rules/boolean-name-prefix.js';
 import classPascalCase from './rules/class-pascal-case.js';
 import curlyExceptReturn from './rules/curly-except-return.js';
 import indexOnlyReexports from './rules/index-only-reexports.js';
@@ -17,6 +18,7 @@ export default {
   rules: {
     'adjacent-same-path': adjacentSamePath,
     'as-const-upper-snake': asConstUpperSnake,
+    'boolean-name-prefix': booleanNamePrefix,
     'class-pascal-case': classPascalCase,
     'curly-except-return': curlyExceptReturn,
     'index-only-reexports': indexOnlyReexports,

@@ -83,6 +83,8 @@ export const style = [
       ],
 
       // ── Custom rules ──
+      // boolean variables/params/properties start with is/has/can/should/will/did/does/are/was/were
+      'amuri/boolean-name-prefix': 'error',
       // class names are PascalCase
       'amuri/class-pascal-case': 'error',
       // braces for all if-bodies except bare `return;` guard clauses (auto-fix)

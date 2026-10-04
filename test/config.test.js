@@ -255,6 +255,20 @@ test('class-pascal-case: class names must be PascalCase', async () => {
   assert.equal(await found('class UserService {}\n\nclass HTTPClient {}\n\nconst A = class {};\n\nexport { A };\n'), 0);
 });
 
+test('boolean-name-prefix: booleans need is/has/can/should... prefix', async () => {
+  const found = async (code) => (await ids(code)).filter((id) => id === 'amuri/boolean-name-prefix').length;
+
+  assert.equal(await found('const active = true;\n\nexport { active };\n'), 1);
+  assert.equal(await found('const empty = items.length === 0;\n\nexport { empty };\n'), 1);
+  assert.equal(await found('const ready = !x;\n\nexport { ready };\n'), 1);
+  assert.equal(await found('const loaded: boolean = load();\n\nexport { loaded };\n'), 1);
+  assert.equal(await found('function f(visible: boolean, open = false) {}\n\nexport { f };\n'), 2);
+  assert.equal(await found('interface IA { visible: boolean }\n'), 1);
+  assert.equal(await found('const isActive = true;\n\nconst hasItems = a > 1;\n\nconst IS_DEBUG = false;\n\nexport { hasItems, IS_DEBUG, isActive };\n'), 0);
+  assert.equal(await found('const island = 1;\n\nconst issue = true;\n\nexport { island, issue };\n'), 1);
+  assert.equal(await found('const x = foo();\n\nexport { x };\n'), 0);
+});
+
 test('padding: single-line declarations of one kind may be adjacent, multiline ones need blank lines', async () => {
   const found = async (code) =>
     (await ids(code)).filter((id) => id === 'amuri/padding-line-between-statements').length;
