@@ -2,6 +2,7 @@ import adjacentSamePath from './rules/adjacent-same-path.js';
 import asConstUpperSnake from './rules/as-const-upper-snake.js';
 import curlyExceptReturn from './rules/curly-except-return.js';
 import indexOnlyReexports from './rules/index-only-reexports.js';
+import noBarrelDeepImport from './rules/no-barrel-deep-import.js';
 import noDuplicateSameKind from './rules/no-duplicate-same-kind.js';
 import noInlineExport from './rules/no-inline-export.js';
 import noInlineTypeSpecifier from './rules/no-inline-type-specifier.js';
@@ -16,6 +17,7 @@ export default {
     'as-const-upper-snake': asConstUpperSnake,
     'curly-except-return': curlyExceptReturn,
     'index-only-reexports': indexOnlyReexports,
+    'no-barrel-deep-import': noBarrelDeepImport,
     'no-duplicate-same-kind': noDuplicateSameKind,
     'no-inline-export': noInlineExport,
     'no-inline-type-specifier': noInlineTypeSpecifier,

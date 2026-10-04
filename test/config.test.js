@@ -1,3 +1,5 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ESLint } from 'eslint';
@@ -179,4 +181,34 @@ test('index-only-reexports: index files allow only imports and re-exports', asyn
   assert.ok((await ids('const a = 1;\n\nexport { a };\n', 'index.ts')).includes('amuri/index-only-reexports'));
   assert.ok((await ids('export default 1;\n', 'index.ts')).includes('amuri/index-only-reexports'));
   assert.ok(!(await ids('const a = 1;\n\nexport { a };\n', 'a.ts')).includes('amuri/index-only-reexports'));
+});
+
+test('no-barrel-deep-import: relative imports into a folder with index must go through it', async () => {
+  const root = mkdtempSync(join(process.cwd(), 'test', '.barrel-'));
+  mkdirSync(join(root, 'feature/utils'), { recursive: true });
+  mkdirSync(join(root, 'plain'), { recursive: true });
+  writeFileSync(join(root, 'feature/index.ts'), '');
+  writeFileSync(join(root, 'feature/internal.ts'), '');
+  writeFileSync(join(root, 'plain/x.ts'), '');
+
+  try {
+    const has = async (code, file = 'main.ts') =>
+      (await ids(code, join(root, file))).includes('amuri/no-barrel-deep-import');
+
+    assert.ok(await has("import { a } from './feature/internal';\n\nexport { a };\n"));
+    assert.ok(await has("import { a } from './feature/utils/x';\n\nexport { a };\n"));
+    assert.ok(await has("export { a } from './feature/internal';\n"));
+    assert.ok(!(await has("import { a } from './feature';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from './feature/index';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from './plain/x';\n\nexport { a };\n")));
+    assert.ok(!(await has("import { a } from 'pkg/deep';\n\nexport { a };\n")));
+    // inside the folder itself, siblings and nested files are fine
+    assert.ok(!(await has("import { a } from './internal';\n\nexport { a };\n", 'feature/other.ts')));
+    assert.ok(!(await has("import { a } from './utils/x';\n\nexport { a };\n", 'feature/other.ts')));
+    assert.ok(!(await has("import { a } from '../internal';\n\nexport { a };\n", 'feature/utils/y.ts')));
+    // from outside through a parent path
+    assert.ok(await has("import { a } from '../feature/internal';\n\nexport { a };\n", 'plain/z.ts'));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
