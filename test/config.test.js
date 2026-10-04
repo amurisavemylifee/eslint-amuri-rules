@@ -246,3 +246,11 @@ test('no-barrel-deep-import: aliases option resolves aliased paths', async () =>
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('class-pascal-case: class names must be PascalCase', async () => {
+  const found = async (code) => (await ids(code)).filter((id) => id === 'amuri/class-pascal-case').length;
+
+  assert.equal(await found('class userService {}\n\nclass User_service {}\n\nclass _Base {}\n'), 3);
+  assert.equal(await found('const A = class bad_name {};\n\nexport { A };\n'), 1);
+  assert.equal(await found('class UserService {}\n\nclass HTTPClient {}\n\nconst A = class {};\n\nexport { A };\n'), 0);
+});

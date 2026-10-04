@@ -82,6 +82,8 @@ export const style = [
       ],
 
       // ── Custom rules ──
+      // class names are PascalCase
+      'amuri/class-pascal-case': 'error',
       // braces for all if-bodies except bare `return;` guard clauses (auto-fix)
       'amuri/curly-except-return': 'error',
       // index files contain only imports and re-exports, no logic

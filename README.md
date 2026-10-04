@@ -1,10 +1,11 @@
 # @amurisavemylifee/eslint-config
 
-Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 12 custom rules
+Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 13 custom rules
 (plugin `amuri`, taken from `gta-rp-server`, branch `refactor/architecture`).
 
 | Custom rule | What it does |
 | --- | --- |
+| `amuri/class-pascal-case` | class names are `PascalCase` (no underscores, `$`, or lowercase start) |
 | `amuri/curly-except-return` | braces on every `if` body except bare `return;` |
 | `amuri/index-only-reexports` | `index.*` files may only contain imports and re-exports, no logic |
 | `amuri/no-barrel-deep-import` | relative imports of a folder with an `index` file go through the index, not its internals; aliases via option `{ aliases: { '@': 'src' } }` |
