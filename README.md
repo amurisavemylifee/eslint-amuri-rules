@@ -13,7 +13,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 14 
 | `amuri/adjacent-same-path` | imports/re-exports from one path stay adjacent |
 | `amuri/no-duplicate-same-kind` | one `import {}` + one `import type {}` per module (replaces `import/no-duplicates`) |
 | `amuri/no-inline-type-specifier` | `import type { A }` instead of `import { type A }` |
-| `amuri/padding-line-between-statements` | core `padding-line-between-statements` (config in `style`), but consecutive single-line `type` / `interface` declarations need no blank line |
+| `amuri/padding-line-between-statements` | core `padding-line-between-statements` (config in `style`), but consecutive single-line `type` (or `interface`) declarations need no blank line, mixed kinds do |
 | `amuri/reexports-before-local` | `export {} from` before local `export {}` |
 | `amuri/as-const-upper-snake` | `as const` constants are `UPPER_SNAKE_CASE`; `UPPER_SNAKE_CASE` objects/arrays are `as const` (primitives need no `as const`) |
 | `amuri/sorted-specifiers` | alphabetical order inside `import { }` / `export { }` (auto-fix) |

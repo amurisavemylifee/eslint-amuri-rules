@@ -44,7 +44,7 @@ export const style = [
     plugins: { import: importPlugin, amuri: plugin },
     rules: {
       // ── Blank lines between statements (auto-fix) ──
-      // core rule + exception: consecutive single-line type/interface declarations need no blank line
+      // core rule + exception: consecutive single-line declarations of the same kind (type/type, interface/interface) need no blank line
       'amuri/padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: '*', next: '*' },

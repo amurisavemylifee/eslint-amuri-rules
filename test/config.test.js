@@ -255,11 +255,15 @@ test('class-pascal-case: class names must be PascalCase', async () => {
   assert.equal(await found('class UserService {}\n\nclass HTTPClient {}\n\nconst A = class {};\n\nexport { A };\n'), 0);
 });
 
-test('padding: single-line types may be adjacent, multiline ones need blank lines', async () => {
+test('padding: single-line declarations of one kind may be adjacent, multiline ones need blank lines', async () => {
   const found = async (code) =>
     (await ids(code)).filter((id) => id === 'amuri/padding-line-between-statements').length;
 
-  assert.equal(await found('type TA = string;\ntype TB = number;\ninterface IC { a: string }\n'), 0);
+  assert.equal(await found('type TA = string;\ntype TB = number;\n'), 0);
+  assert.equal(await found('interface IA { a: string }\ninterface IB { b: string }\n'), 0);
+  assert.equal(await found('type TA = string;\ninterface IC { a: string }\n'), 1);
+  assert.equal(await found('interface IC { a: string }\ntype TA = string;\n'), 1);
+  assert.equal(await found('type TA = string;\n\ninterface IC { a: string }\n'), 0);
   assert.equal(await found('type TA = string;\n\ntype TB = number;\n'), 0);
   assert.equal(await found('type TA = {\n  a: string;\n};\ntype TB = number;\n'), 1);
   assert.equal(await found('type TA = string;\ntype TB = {\n  a: string;\n};\n'), 1);

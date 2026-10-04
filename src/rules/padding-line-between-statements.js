@@ -1,9 +1,13 @@
 // ESLint's `padding-line-between-statements` with one exception: consecutive single-line
-// `type` / `interface` declarations need no blank line between them (like `const` / `let`).
-// Multiline declarations still follow the configured padding. Options are the core rule's.
+// `type` (or `interface`) declarations need no blank line between them (like `const` / `let`).
+// Different kinds (type next to interface) and multiline declarations still follow the
+// configured padding. Options are the core rule's.
 //
 // ✅ type TA = string;
 //    type TB = number;
+//
+// ❌ type TA = string;
+//    interface IB { a: string }   ← blank line required, different kind
 //
 // ❌ type TA = {
 //      a: string;
@@ -15,10 +19,13 @@ const core = builtinRules.get('padding-line-between-statements');
 
 const unwrap = (node) => (node.type === 'ExportNamedDeclaration' && node.declaration ? node.declaration : node);
 
-const isSingleLineType = (node) => {
+// 'TSTypeAliasDeclaration' / 'TSInterfaceDeclaration' for a single-line declaration, else null
+const singleLineTypeKind = (node) => {
   const { type, loc } = unwrap(node);
 
-  return (type === 'TSTypeAliasDeclaration' || type === 'TSInterfaceDeclaration') && loc.start.line === loc.end.line;
+  if (type !== 'TSTypeAliasDeclaration' && type !== 'TSInterfaceDeclaration') return null;
+
+  return loc.start.line === loc.end.line ? type : null;
 };
 
 const previousSibling = (node) => {
@@ -36,7 +43,9 @@ export default {
           const { node } = descriptor;
           const prev = node && previousSibling(node);
 
-          if (prev && isSingleLineType(prev) && isSingleLineType(node)) return;
+          const kind = prev && singleLineTypeKind(prev);
+
+          if (kind && kind === singleLineTypeKind(node)) return;
 
           context.report(descriptor);
         },
