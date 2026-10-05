@@ -1,7 +1,6 @@
 # @amurisavemylifee/eslint-config
 
-Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 18 custom rules
-(plugin `amuri`, taken from `gta-rp-server`, branch `refactor/architecture`).
+Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 18 custom rules (plugin `amuri`).
 
 | Custom rule | What it does |
 | --- | --- |
