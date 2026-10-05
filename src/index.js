@@ -97,6 +97,8 @@ export const style = [
       'amuri/max-function-params': 'error',
       // folders with an index file are imported through it, not via internal files
       'amuri/no-barrel-deep-import': 'error',
+      // aliased imports use the most specific alias (option `aliases`, inactive without it)
+      'amuri/prefer-short-alias': 'error',
       // forbids inline exports, use export { } blocks (auto-fix strips `export`)
       'amuri/no-inline-export': 'error',
       // imports/re-exports from the same path must be adjacent

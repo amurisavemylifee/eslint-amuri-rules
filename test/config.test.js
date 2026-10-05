@@ -436,3 +436,27 @@ test('boolean-name-prefix / boolean-function-prefix: custom prefixes via options
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('prefer-short-alias: most specific alias wins, auto-fix rewrites', async () => {
+  const aliases = { '@': 'src', '@components': 'src/components', '@trpc': 'src/server/api/trpc' };
+  const eslint = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig: [...config, { rules: { 'amuri/prefer-short-alias': ['error', { aliases }] } }],
+    fix: true,
+  });
+  const fixed = async (code) => {
+    const [result] = await eslint.lintText(code, { filePath: join(process.cwd(), 'src/app/main.ts') });
+
+    return result.output ?? code;
+  };
+  const wrap = (path) => `import { a } from '${path}';\n\nexport { a };\n`;
+
+  assert.equal(await fixed(wrap('@/components/Button')), wrap('@components/Button'));
+  assert.equal(await fixed(wrap('@/server/api/trpc')), wrap('@trpc'));
+  assert.equal(await fixed(wrap('@/server/api/trpc/router')), wrap('@trpc/router'));
+  assert.equal(await fixed(wrap('@/env')), wrap('@/env'));
+  assert.equal(await fixed(wrap('@components/Button')), wrap('@components/Button'));
+  assert.equal(await fixed(wrap('@trpc')), wrap('@trpc'));
+  assert.equal(await fixed(wrap('./local')), wrap('./local'));
+  assert.equal(await fixed(wrap('react')), wrap('react'));
+});

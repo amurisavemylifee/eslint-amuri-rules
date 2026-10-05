@@ -1,6 +1,6 @@
 # @amurisavemylifee/eslint-config
 
-Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 16 custom rules
+Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 17 custom rules
 (plugin `amuri`, taken from `gta-rp-server`, branch `refactor/architecture`).
 
 | Custom rule | What it does |
@@ -12,6 +12,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 16 
 | `amuri/curly-except-return` | braces on every `if` body except bare `return;` |
 | `amuri/index-only-reexports` | `index.*` files may only contain imports and re-exports, no logic |
 | `amuri/no-barrel-deep-import` | relative imports of a folder with an `index` file go through the index, not its internals; aliases via option `{ aliases: { '@': 'src' } }` |
+| `amuri/prefer-short-alias` | aliased imports use the most specific alias: with `{ aliases: { '@': 'src', '@components': 'src/components' } }` `@/components/Button` → `@components/Button` (auto-fix; inactive without the option) |
 | `amuri/no-inline-export` | no `export const/function/...`, use `export { }` blocks |
 | `amuri/adjacent-same-path` | imports/re-exports from one path stay adjacent |
 | `amuri/no-duplicate-same-kind` | one `import {}` + one `import type {}` per module (replaces `import/no-duplicates`) |
