@@ -38,8 +38,6 @@ export const typeAware = [
       'amuri/boolean-name-prefix': 'error',
       // functions returning boolean start with is/has/can/... too
       'amuri/boolean-function-prefix': 'error',
-      // no positional boolean parameters, pass an options object
-      'amuri/no-boolean-param': 'error',
     },
   },
 ];

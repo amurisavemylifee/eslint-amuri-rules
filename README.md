@@ -1,13 +1,12 @@
 # @amurisavemylifee/eslint-config
 
-Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 14 custom rules
+Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 16 custom rules
 (plugin `amuri`, taken from `gta-rp-server`, branch `refactor/architecture`).
 
 | Custom rule | What it does |
 | --- | --- |
 | `amuri/boolean-name-prefix` | **type-aware only** (`typeAware` config, inactive without type info): variables, params and properties of type `boolean` start with `is`/`has`/`can`/`should`/`will`/`did`/`does`/`are`/`was`/`were` (option `{ prefixes: ['is', 'has'] }` replaces the list) |
 | `amuri/boolean-function-prefix` | **type-aware only**: functions/methods returning `boolean` (or a type predicate) start with `is`/`has`/`can`/... (same `prefixes` option) |
-| `amuri/no-boolean-param` | **type-aware only**: no positional `boolean` parameters, pass an options object |
 | `amuri/max-function-params` | at most 3 function parameters (option `{ max }`), more — an options object |
 | `amuri/class-pascal-case` | class names are `PascalCase` (no underscores, `$`, or lowercase start) |
 | `amuri/curly-except-return` | braces on every `if` body except bare `return;` |

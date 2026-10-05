@@ -343,21 +343,6 @@ test('boolean-function-prefix: boolean-returning functions need a prefix (type-a
   assert.deepEqual(await typedFound(code, 'amuri/boolean-function-prefix'), { typed: 4, untyped: 0 });
 });
 
-test('no-boolean-param: positional booleans are forbidden (type-aware)', async () => {
-  const code = [
-    'function f(a: string, compact: boolean) {}',
-    '',
-    'const g = (flag?: boolean) => flag;',
-    '',
-    'const h = (a: string, options: { compact: boolean }) => options;',
-    '',
-    'export { f, g, h };',
-    '',
-  ].join('\n');
-
-  assert.deepEqual(await typedFound(code, 'amuri/no-boolean-param'), { typed: 2, untyped: 0 });
-});
-
 test('max-function-params: more than 3 params flagged, option changes the limit', async () => {
   const found = async (code) => (await ids(code)).filter((id) => id === 'amuri/max-function-params').length;
 
