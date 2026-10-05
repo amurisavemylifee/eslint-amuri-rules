@@ -26,7 +26,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 17 
 
 ## Import order
 
-`import/order` groups: builtin, external, internal, parent, sibling, index (blank line between groups). Inside `external`, foundational frameworks (`react`, `vue`, `express`, `svelte`, `next`, `nuxt`, `fastify`, `koa`, Angular, NestJS) come first, followed directly (no blank line) by their ecosystem (`react-dom`, `vue-router`, `pinia`, `@vue/*`, ...), then all other libraries.
+`import/order` groups: builtin, external, internal, parent, sibling, index (blank line between groups). Inside `external`, foundational frameworks (`react`, `vue`, `express`, `svelte`, `next`, `nuxt`, `fastify`, `koa`, Angular, NestJS) come first, followed directly (no blank line) by their ecosystem (`react-dom`, `vue-router`, `pinia`, `@vue/*`, ...), then all other libraries. Imports inside each group (builtin, ecosystem, other external, ...) are sorted alphabetically (case-insensitive); frameworks keep the fixed order of the list.
 
 ## Usage
 

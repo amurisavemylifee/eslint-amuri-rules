@@ -45,6 +45,7 @@ export const typeAware = [
 // Foundational frameworks go first, their ecosystem libraries right after (no blank line between).
 const FRAMEWORKS = ['react', 'vue', 'express', 'svelte', 'next', 'nuxt', 'fastify', 'koa', '@angular/core', '@nestjs/core'];
 
+// One shared rank (brace pattern), so `alphabetize` sorts the ecosystem libraries among themselves.
 const FRAMEWORK_ECOSYSTEM = [
   'react-*', 'react-*/**', 'react/**', '@react-*/**', 'vue-*', 'vue-*/**', '@vue/**', 'vuex', 'pinia',
   'express-*', 'svelte/**', 'svelte-*', 'next/**', 'next-*', 'nuxt/**', '@nuxt/**', 'fastify-*',
@@ -53,7 +54,7 @@ const FRAMEWORK_ECOSYSTEM = [
 
 const FRAMEWORK_PATH_GROUPS = [
   ...FRAMEWORKS.map((pattern) => ({ pattern, group: 'external', position: 'before' })),
-  ...FRAMEWORK_ECOSYSTEM.map((pattern) => ({ pattern, group: 'external', position: 'before' })),
+  { pattern: `{${FRAMEWORK_ECOSYSTEM.join(',')}}`, group: 'external', position: 'before' },
 ];
 
 /** Import/export layout + statement spacing + custom `amuri/*` rules, all files. */
@@ -98,6 +99,7 @@ export const style = [
           pathGroups: FRAMEWORK_PATH_GROUPS,
           pathGroupsExcludedImportTypes: ['builtin'],
           distinctGroup: false,
+          alphabetize: { order: 'asc', caseInsensitive: true },
           'newlines-between': 'always',
         },
       ],
