@@ -57,6 +57,8 @@ const FRAMEWORK_ECOSYSTEM = [
 const FRAMEWORK_PATH_GROUPS = [
   ...FRAMEWORKS.map((pattern) => ({ pattern, group: 'object', position: 'before' })),
   { pattern: `{${FRAMEWORK_ECOSYSTEM.join(',')}}`, group: 'object', position: 'before' },
+  // path aliases (`@/x`, `~/x`) can't be told from packages without a resolver: put them in `internal`
+  { pattern: '{@,~}/**', group: 'internal' },
 ];
 
 /** Import/export layout + statement spacing + custom `amuri/*` rules, all files. */

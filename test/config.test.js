@@ -499,3 +499,17 @@ test('side-effect-imports-last: moves bare imports after the other imports, keep
   assert.ok((await run(adjacent, 'a.ts', true)).output.includes("'axios';\n\nimport './a.css';"));
   assert.ok(!(await ids(output)).includes('amuri/side-effect-imports-last'));
 });
+
+test('import/order: path aliases sit between external libraries and parent imports', async () => {
+  const src = [
+    "import { p } from '../parent';",
+    "import { i } from '@/internal';",
+    "import { t } from '~/tilde';",
+    "import axios from 'axios';",
+    '',
+    'export { axios, i, p, t };',
+    '',
+  ].join('\n');
+  const { output } = await run(src, 'src/a.ts', true);
+  assert.ok(output.startsWith("import axios from 'axios';\n\nimport { i } from '@/internal';\nimport { t } from '~/tilde';\n\nimport { p } from '../parent';\n"), output);
+});
