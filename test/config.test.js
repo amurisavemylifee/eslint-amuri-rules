@@ -493,6 +493,9 @@ test('side-effect-imports-last: moves bare imports after the other imports, keep
   ].join('\n');
   assert.ok((await ids(src)).includes('amuri/side-effect-imports-last'));
   const { output } = await run(src, 'a.ts', true);
-  assert.ok(output.includes("import axios from 'axios';\nimport './a.css';\nimport 'reflect-metadata';\n"), output);
+  assert.ok(output.includes("import axios from 'axios';\n\nimport './a.css';\nimport 'reflect-metadata';\n"), output);
+  const adjacent = "import axios from 'axios';\nimport './a.css';\n\nexport { axios };\n";
+  assert.ok((await ids(adjacent)).includes('amuri/side-effect-imports-last'));
+  assert.ok((await run(adjacent, 'a.ts', true)).output.includes("'axios';\n\nimport './a.css';"));
   assert.ok(!(await ids(output)).includes('amuri/side-effect-imports-last'));
 });
