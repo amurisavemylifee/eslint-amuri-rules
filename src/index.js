@@ -50,7 +50,7 @@ export const style = [
     plugins: { import: importPlugin, amuri: plugin },
     rules: {
       // ── Blank lines between statements (auto-fix) ──
-      // core rule + exception: consecutive single-line declarations of the same kind (type/type, interface/interface) need no blank line
+      // core rule + exception: a single-line declaration followed by one of the same kind (type, interface, const, let) needs no blank line, even if the next is multiline
       'amuri/padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: '*', next: '*' },

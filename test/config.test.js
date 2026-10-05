@@ -386,7 +386,13 @@ test('padding: single-line declarations of one kind may be adjacent, multiline o
   assert.equal(await found('type TA = string;\n\ninterface IC { a: string }\n'), 0);
   assert.equal(await found('type TA = string;\n\ntype TB = number;\n'), 0);
   assert.equal(await found('type TA = {\n  a: string;\n};\ntype TB = number;\n'), 1);
-  assert.equal(await found('type TA = string;\ntype TB = {\n  a: string;\n};\n'), 1);
+  assert.equal(await found('type TA = string;\ntype TB = {\n  a: string;\n};\n'), 0);
+  assert.equal(await found('type TA = string;\ntype TB = number;\ntype TC = {\n  a: string;\n};\n'), 0);
+  assert.equal(await found('interface IA { a: string }\ninterface IB {\n  a: string;\n}\n'), 0);
+  assert.equal(await found('const a = 1;\nconst b = {\n  c: 2,\n};\n\nexport { a, b };\n'), 0);
+  assert.equal(await found('let a = 1;\nlet b = {\n  c: 2,\n};\n\nexport { a, b };\n'), 0);
+  assert.equal(await found('type TA = {\n  a: string;\n};\ntype TB = {\n  a: string;\n};\n'), 1);
+  assert.equal(await found('type TA = string;\ninterface IB {\n  a: string;\n}\n'), 1);
   assert.equal(await found('type TA = string;\nconst a = 1;\n\nexport { a };\n'), 1);
   assert.equal(await found('const a = 1;\nfunction f() {}\n\nexport { a, f };\n'), 1);
 });
