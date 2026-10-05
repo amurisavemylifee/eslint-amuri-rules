@@ -19,7 +19,7 @@ test('default is typescript + style', () => {
 });
 
 test('clean file has no messages', async () => {
-  assert.deepEqual(await ids('const a: number = 1;\n\nexport { a };\n'), []);
+  assert.deepEqual(await ids('const MAX: number = 1;\n\nexport { MAX };\n'), []);
 });
 
 test('import/first', async () => {
@@ -165,6 +165,11 @@ test('as-const-upper-snake: both directions', async () => {
   assert.equal(await count("const MAX = 3;\nconst NAME = 'a';\n\nexport { MAX, NAME };\n"), 0);
   assert.equal(await count("const DIRS = { up: 'UP' } as const satisfies object;\n\nexport { DIRS };\n"), 0);
   assert.equal(await count('const MAX_RETRIES = 3 as const;\n\nexport { MAX_RETRIES };\n'), 0);
+  assert.equal(await count("const rootClassName = 'tw:flex';\n\nexport { rootClassName };\n"), 1);
+  assert.equal(await count('const maxRetries = 3;\nconst offset = -1;\nconst tpl = `x`;\n\nexport { maxRetries, offset, tpl };\n'), 3);
+  assert.equal(await count("const ROOT_CLASS_NAME = 'tw:flex';\n\nexport { ROOT_CLASS_NAME };\n"), 0);
+  assert.equal(await count("function f() {\n  const label = 'x';\n\n  return label;\n}\n\nexport { f };\n"), 0);
+  assert.equal(await count('const items = getItems();\nconst tpl = `a${items}`;\n\nexport { items, tpl };\n'), 0);
   assert.equal(await count('const { a } = { a: 1 };\n\nexport { a };\n'), 0);
 });
 

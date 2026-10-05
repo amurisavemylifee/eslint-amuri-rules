@@ -18,7 +18,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 16 
 | `amuri/no-inline-type-specifier` | `import type { A }` instead of `import { type A }` |
 | `amuri/padding-line-between-statements` | core `padding-line-between-statements` (config in `style`), but a single-line `type` / `interface` / `const` / `let` may be followed directly by a (single- or multiline) declaration of the same kind; mixed kinds and blank lines after multiline ones still apply |
 | `amuri/reexports-before-local` | `export {} from` before local `export {}` |
-| `amuri/as-const-upper-snake` | `as const` constants are `UPPER_SNAKE_CASE`; `UPPER_SNAKE_CASE` objects/arrays are `as const` (primitives need no `as const`) |
+| `amuri/as-const-upper-snake` | `as const` constants and top-level constants with a literal value (string, number, boolean) are `UPPER_SNAKE_CASE`; `UPPER_SNAKE_CASE` objects/arrays are `as const` (primitives need no `as const`) |
 | `amuri/sorted-specifiers` | alphabetical order inside `import { }` / `export { }` (auto-fix) |
 | `amuri/type-name-prefix` | interfaces are `IFoo`, type aliases are `TFoo`, enums are `EFoo`, generic parameters are `T` / `TFoo`; custom prefixes via option `{ interface: 'I', type: 'T', enum: 'E', generic: 'T' }` |
 | `amuri/value-before-type` | value import/export before type one for the same path |
