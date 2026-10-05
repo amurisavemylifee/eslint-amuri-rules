@@ -1,6 +1,6 @@
 {
   "name": "@amurisavemylifee/eslint-config",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Shared ESLint flat config (TypeScript, import/export rules)",
   "type": "module",
   "main": "src/index.js",
