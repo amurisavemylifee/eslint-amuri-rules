@@ -390,3 +390,53 @@ test('padding: single-line declarations of one kind may be adjacent, multiline o
   assert.equal(await found('type TA = string;\nconst a = 1;\n\nexport { a };\n'), 1);
   assert.equal(await found('const a = 1;\nfunction f() {}\n\nexport { a, f };\n'), 1);
 });
+
+const withRule = async (ruleId, options, code) => {
+  const eslint = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig: [...config, { rules: { [ruleId]: ['error', ...options] } }],
+  });
+  const [result] = await eslint.lintText(code, { filePath: 'a.ts' });
+
+  return result.messages.filter((m) => m.ruleId === ruleId);
+};
+
+test('type-name-prefix: custom prefixes via options', async () => {
+  const options = [{ interface: 'Interface', type: 'Type', enum: 'Enum', generic: 'G' }];
+  const ok = 'interface InterfaceA {}\n\ntype TypeB = {};\n\nenum EnumC {}\n\nfunction f<G, GKey>() {}\n\nexport { f };\n';
+  const bad = 'interface IA {}\n\ntype TB = {};\n\nenum EC {}\n\nfunction f<T>() {}\n\nexport { f };\n';
+
+  assert.equal((await withRule('amuri/type-name-prefix', options, ok)).length, 0);
+  assert.equal((await withRule('amuri/type-name-prefix', options, bad)).length, 4);
+  assert.equal((await withRule('amuri/type-name-prefix', [{ type: 'Type' }], 'interface IA {}\n')).length, 0);
+});
+
+test('boolean-name-prefix / boolean-function-prefix: custom prefixes via options', async () => {
+  const dir = mkdtempSync(join(process.cwd(), '.tmp-typed-'));
+
+  try {
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'tsconfig.json'), JSON.stringify({ compilerOptions: { strict: true }, include: ['src'] }));
+
+    const code = 'const isOn = true;\n\nconst hasX = true;\n\nconst enabledA = true;\n\nconst enabledFn = () => true;\n\nexport { enabledA, enabledFn, hasX, isOn };\n';
+    const file = join(dir, 'src', 'a.ts');
+
+    writeFileSync(file, code);
+
+    const eslint = new ESLint({
+      overrideConfigFile: true,
+      overrideConfig: [
+        ...typescript,
+        ...typeAware,
+        { rules: { 'amuri/boolean-name-prefix': ['error', { prefixes: ['enabled'] }], 'amuri/boolean-function-prefix': ['error', { prefixes: ['enabled'] }] } },
+      ],
+      cwd: dir,
+    });
+    const [result] = await eslint.lintText(code, { filePath: file });
+    const names = result.messages.map((m) => m.message.match(/"(\w+)"/)?.[1]);
+
+    assert.deepEqual(names, ['isOn', 'hasX'], JSON.stringify(result.messages.map((m) => m.message)));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

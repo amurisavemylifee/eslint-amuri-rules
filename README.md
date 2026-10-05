@@ -5,8 +5,8 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 14 
 
 | Custom rule | What it does |
 | --- | --- |
-| `amuri/boolean-name-prefix` | **type-aware only** (`typeAware` config, inactive without type info): variables, params and properties of type `boolean` start with `is`/`has`/`can`/`should`/`will`/`did`/`does`/`are`/`was`/`were` |
-| `amuri/boolean-function-prefix` | **type-aware only**: functions/methods returning `boolean` (or a type predicate) start with `is`/`has`/`can`/... |
+| `amuri/boolean-name-prefix` | **type-aware only** (`typeAware` config, inactive without type info): variables, params and properties of type `boolean` start with `is`/`has`/`can`/`should`/`will`/`did`/`does`/`are`/`was`/`were` (option `{ prefixes: ['is', 'has'] }` replaces the list) |
+| `amuri/boolean-function-prefix` | **type-aware only**: functions/methods returning `boolean` (or a type predicate) start with `is`/`has`/`can`/... (same `prefixes` option) |
 | `amuri/no-boolean-param` | **type-aware only**: no positional `boolean` parameters, pass an options object |
 | `amuri/max-function-params` | at most 3 function parameters (option `{ max }`), more — an options object |
 | `amuri/class-pascal-case` | class names are `PascalCase` (no underscores, `$`, or lowercase start) |
@@ -21,7 +21,7 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 14 
 | `amuri/reexports-before-local` | `export {} from` before local `export {}` |
 | `amuri/as-const-upper-snake` | `as const` constants are `UPPER_SNAKE_CASE`; `UPPER_SNAKE_CASE` objects/arrays are `as const` (primitives need no `as const`) |
 | `amuri/sorted-specifiers` | alphabetical order inside `import { }` / `export { }` (auto-fix) |
-| `amuri/type-name-prefix` | interfaces are `IFoo`, type aliases are `TFoo`, enums are `EFoo`, generic parameters are `T` / `TFoo` |
+| `amuri/type-name-prefix` | interfaces are `IFoo`, type aliases are `TFoo`, enums are `EFoo`, generic parameters are `T` / `TFoo`; custom prefixes via option `{ interface: 'I', type: 'T', enum: 'E', generic: 'T' }` |
 | `amuri/value-before-type` | value import/export before type one for the same path |
 
 ## Usage

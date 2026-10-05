@@ -1,13 +1,13 @@
 // Functions and methods that return `boolean` must be named with a boolean prefix
 // (is, has, can, should, will, did, does, are, was, were). Type-aware: the checker decides
-// from the return type, so the rule does nothing without type information (`typeAware` config).
+// from the return type, so the rule does nothing without type information (`typeAware` config). Option `{ prefixes: ['is', 'has'] }` replaces the default list.
 // Type predicates (`x is Foo`) count as `boolean`; `Promise<boolean>` does not.
 //
 // WRONG: function active(user: IUser): boolean {}
 // WRONG: const empty = (list: string[]) => list.length === 0;
 // OK:    function isActive(user: IUser): boolean {}
 // OK:    const isEmpty = (list: string[]) => list.length === 0;
-import { booleanHint, hasBooleanPrefix, isBooleanType, PREFIX_LIST } from '../utils/boolean.js';
+import { createBooleanPrefixes, isBooleanType, PREFIXES_SCHEMA } from '../utils/boolean.js';
 
 const nameNode = (fn) => {
   const { parent } = fn;
@@ -26,12 +26,13 @@ const nameNode = (fn) => {
 export default {
   meta: {
     type: 'suggestion',
-    schema: [],
+    schema: PREFIXES_SCHEMA,
     messages: {
       booleanFunctionPrefix: 'Function "{{name}}" returns boolean, so it must start with one of: {{prefixes}} (e.g. {{hint}}).',
     },
   },
   create(context) {
+    const prefixes = createBooleanPrefixes(context.options[0]);
     const services = context.sourceCode.parserServices;
     const checker = services?.program?.getTypeChecker();
 
@@ -40,7 +41,7 @@ export default {
     const check = (fn) => {
       const id = nameNode(fn);
 
-      if (!id || hasBooleanPrefix(id.name)) return;
+      if (!id || prefixes.has(id.name)) return;
 
       const signature = checker.getSignatureFromDeclaration(services.esTreeNodeToTSNodeMap.get(fn));
 
@@ -49,7 +50,7 @@ export default {
       context.report({
         node: id,
         messageId: 'booleanFunctionPrefix',
-        data: { name: id.name, prefixes: PREFIX_LIST, hint: booleanHint(id.name) },
+        data: { name: id.name, prefixes: prefixes.list, hint: prefixes.hint(id.name) },
       });
     };
 

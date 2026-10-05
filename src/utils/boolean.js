@@ -1,8 +1,6 @@
 import ts from 'typescript';
 
 const PREFIXES = ['is', 'has', 'can', 'should', 'will', 'did', 'does', 'are', 'was', 'were'];
-const PREFIXED = new RegExp(`^_*(?:${PREFIXES.join('|')})(?:[A-Z0-9]|$)`);
-const PREFIXED_UPPER = new RegExp(`^_*(?:${PREFIXES.join('|').toUpperCase()})(?:_|$)`);
 const NULLISH = ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void;
 
 /** `boolean` / `true` / `false`, optionally with `null` / `undefined`. */
@@ -12,14 +10,32 @@ const isBooleanType = (type) => {
   return parts.length > 0 && parts.every((part) => (part.flags & ts.TypeFlags.BooleanLike) !== 0);
 };
 
-const hasBooleanPrefix = (name) => PREFIXED.test(name) || PREFIXED_UPPER.test(name);
+const PREFIXES_SCHEMA = [
+  {
+    type: 'object',
+    properties: { prefixes: { type: 'array', items: { type: 'string', minLength: 1 }, minItems: 1, uniqueItems: true } },
+    additionalProperties: false,
+  },
+];
 
-const booleanHint = (name) => {
-  const bare = name.replace(/^_+/, '');
+/** Prefix matcher for the rule's `{ prefixes }` option (defaults to the built-in list). */
+const createBooleanPrefixes = (options) => {
+  const list = options?.prefixes ?? PREFIXES;
+  const camel = new RegExp(`^_*(?:${list.join('|')})(?:[A-Z0-9]|$)`);
+  const upper = new RegExp(`^_*(?:${list.join('|').toUpperCase()})(?:_|$)`);
+  const [first] = list;
 
-  return /^[A-Z0-9_]+$/.test(bare) ? `IS_${bare}` : `is${bare[0].toUpperCase()}${bare.slice(1)}`;
+  return {
+    list: list.join(', '),
+    has: (name) => camel.test(name) || upper.test(name),
+    hint: (name) => {
+      const bare = name.replace(/^_+/, '');
+
+      return /^[A-Z0-9_]+$/.test(bare)
+        ? `${first.toUpperCase()}_${bare}`
+        : `${first}${bare[0].toUpperCase()}${bare.slice(1)}`;
+    },
+  };
 };
 
-const PREFIX_LIST = PREFIXES.join(', ');
-
-export { booleanHint, hasBooleanPrefix, isBooleanType, PREFIX_LIST };
+export { createBooleanPrefixes, isBooleanType, PREFIXES_SCHEMA };

@@ -1,7 +1,7 @@
 // Boolean variables, parameters and properties must be named with a boolean prefix:
 // is, has, can, should, will, did, does, are, was, were (followed by an uppercase letter).
 // Type-aware: the checker decides, so the rule does nothing without type information
-// (`typeAware` config). Any `boolean` / `true` / `false` type, optionally with `null` /
+// (`typeAware` config). Option `{ prefixes: ['is', 'has'] }` replaces the default list. Any `boolean` / `true` / `false` type, optionally with `null` /
 // `undefined` (`isOpen?: boolean`), counts as boolean.
 //
 // WRONG: const active = true;
@@ -10,17 +10,18 @@
 // OK:    const isActive = true;
 // OK:    const hasItems = items.length > 0;
 // OK:    const IS_DEBUG = false;
-import { booleanHint, hasBooleanPrefix, isBooleanType, PREFIX_LIST } from '../utils/boolean.js';
+import { createBooleanPrefixes, isBooleanType, PREFIXES_SCHEMA } from '../utils/boolean.js';
 
 export default {
   meta: {
     type: 'suggestion',
-    schema: [],
+    schema: PREFIXES_SCHEMA,
     messages: {
       booleanPrefix: 'Boolean "{{name}}" must start with one of: {{prefixes}} (e.g. {{hint}}).',
     },
   },
   create(context) {
+    const prefixes = createBooleanPrefixes(context.options[0]);
     const services = context.sourceCode.parserServices;
     const checker = services?.program?.getTypeChecker();
 
@@ -29,13 +30,13 @@ export default {
     const check = (idNode) => {
       const { name } = idNode;
 
-      if (hasBooleanPrefix(name)) return;
+      if (prefixes.has(name)) return;
       if (!isBooleanType(checker.getTypeAtLocation(services.esTreeNodeToTSNodeMap.get(idNode)))) return;
 
       context.report({
         node: idNode,
         messageId: 'booleanPrefix',
-        data: { name, prefixes: PREFIX_LIST, hint: booleanHint(name) },
+        data: { name, prefixes: prefixes.list, hint: prefixes.hint(name) },
       });
     };
 
