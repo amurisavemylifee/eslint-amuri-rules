@@ -460,3 +460,20 @@ test('prefer-short-alias: most specific alias wins, auto-fix rewrites', async ()
   assert.equal(await fixed(wrap('./local')), wrap('./local'));
   assert.equal(await fixed(wrap('react')), wrap('react'));
 });
+
+test('import/order: frameworks first, their ecosystem next, no blank lines between', async () => {
+  const src = [
+    "import axios from 'axios';",
+    "import { useRouter } from 'vue-router';",
+    "import { createApp } from 'vue';",
+    "import { createRoot } from 'react-dom/client';",
+    "import React from 'react';",
+    '',
+    'export { axios, createApp, createRoot, React, useRouter };',
+    '',
+  ].join('\n');
+  const { output } = await run(src, 'a.ts', true);
+  assert.ok(output.startsWith(
+    "import React from 'react';\nimport { createApp } from 'vue';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\nimport axios from 'axios';\n",
+  ), output);
+});

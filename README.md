@@ -24,6 +24,10 @@ Shared ESLint flat config (ESLint 9): TypeScript, import/export layout, plus 17 
 | `amuri/type-name-prefix` | interfaces are `IFoo`, type aliases are `TFoo`, enums are `EFoo`, generic parameters are `T` / `TFoo`; custom prefixes via option `{ interface: 'I', type: 'T', enum: 'E', generic: 'T' }` |
 | `amuri/value-before-type` | value import/export before type one for the same path |
 
+## Import order
+
+`import/order` groups: builtin, external, internal, parent, sibling, index (blank line between groups). Inside `external`, foundational frameworks (`react`, `vue`, `express`, `svelte`, `next`, `nuxt`, `fastify`, `koa`, Angular, NestJS) come first, followed directly (no blank line) by their ecosystem (`react-dom`, `vue-router`, `pinia`, `@vue/*`, ...), then all other libraries.
+
 ## Usage
 
 ```sh

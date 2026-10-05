@@ -42,6 +42,20 @@ export const typeAware = [
   },
 ];
 
+// Foundational frameworks go first, their ecosystem libraries right after (no blank line between).
+const FRAMEWORKS = ['react', 'vue', 'express', 'svelte', 'next', 'nuxt', 'fastify', 'koa', '@angular/core', '@nestjs/core'];
+
+const FRAMEWORK_ECOSYSTEM = [
+  'react-*', 'react-*/**', 'react/**', '@react-*/**', 'vue-*', 'vue-*/**', '@vue/**', 'vuex', 'pinia',
+  'express-*', 'svelte/**', 'svelte-*', 'next/**', 'next-*', 'nuxt/**', '@nuxt/**', 'fastify-*',
+  '@fastify/**', '@angular/**', '@nestjs/**',
+];
+
+const FRAMEWORK_PATH_GROUPS = [
+  ...FRAMEWORKS.map((pattern) => ({ pattern, group: 'external', position: 'before' })),
+  ...FRAMEWORK_ECOSYSTEM.map((pattern) => ({ pattern, group: 'external', position: 'before' })),
+];
+
 /** Import/export layout + statement spacing + custom `amuri/*` rules, all files. */
 export const style = [
   {
@@ -81,7 +95,9 @@ export const style = [
         'error',
         {
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          pathGroups: FRAMEWORK_PATH_GROUPS,
           pathGroupsExcludedImportTypes: ['builtin'],
+          distinctGroup: false,
           'newlines-between': 'always',
         },
       ],
