@@ -51,6 +51,25 @@ import amuri, { typeAware } from '@amurisavemylifee/eslint-config';
 export default [...amuri, ...typeAware];
 ```
 
+## Project options
+
+`createConfig` takes the project's path aliases and workspace packages once; they are placed in the `internal`
+import group (between libraries and `../`) and passed to `amuri/no-barrel-deep-import` and `amuri/prefer-short-alias`:
+
+```js
+import { createConfig, typeAware } from '@amurisavemylifee/eslint-config';
+
+export default [
+  ...createConfig({
+    aliases: { '@': 'src', '@components': 'src/components' }, // targets are relative to cwd
+    internal: ['@my-scope'], // workspace packages: `@my-scope/**`
+  }),
+  ...typeAware,
+];
+```
+
+`@/…` and `~/…` are always treated as internal. Without options `createConfig()` equals the default export.
+
 ## Publish
 
 Bump `version` in `package.json`, then push a tag; the `Publish` workflow runs tests and publishes

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ESLint } from 'eslint';
 
-import config, { typescript, typeAware, style } from '../src/index.js';
+import config, { createConfig, typescript, typeAware, style } from '../src/index.js';
 
 const run = async (code, filePath, fix = false) => {
   const eslint = new ESLint({ overrideConfigFile: true, overrideConfig: config, fix });
@@ -513,4 +513,26 @@ test('import/order: path aliases sit between external libraries and parent impor
   ].join('\n');
   const { output } = await run(src, 'src/a.ts', true);
   assert.ok(output.startsWith("import axios from 'axios';\n\nimport { i } from '@/internal';\nimport { t } from '~/tilde';\n\nimport { p } from '../parent';\n"), output);
+});
+
+test('createConfig: aliases and internal packages go to the internal import group and to the alias rules', async () => {
+  const custom = createConfig({ aliases: { '@': 'src', '@components': 'src/components' }, internal: ['@scope'] });
+  const src = [
+    "import { p } from '../parent';",
+    "import { c } from '@components/Button';",
+    "import { s } from '@scope/api';",
+    "import axios from 'axios';",
+    '',
+    'export { axios, c, p, s };',
+    '',
+  ].join('\n');
+  const eslint = new ESLint({ overrideConfigFile: true, overrideConfig: custom, fix: true });
+  const [result] = await eslint.lintText(src, { filePath: 'src/a.ts' });
+  assert.ok(
+    result.output.startsWith("import axios from 'axios';\n\nimport { c } from '@components/Button';\nimport { s } from '@scope/api';\n\nimport { p } from '../parent';\n"),
+    result.output,
+  );
+  const rules = custom.find((c) => c.rules?.['amuri/prefer-short-alias']).rules;
+  assert.deepEqual(rules['amuri/prefer-short-alias'][1].aliases, { '@': 'src', '@components': 'src/components' });
+  assert.equal(createConfig().length, config.length);
 });
