@@ -480,3 +480,19 @@ test('import/order: frameworks first, their ecosystem next, blank line before ot
     "import fs from 'node:fs';\nimport path from 'node:path';\n\nimport React from 'react';\nimport { createApp } from 'vue';\nimport { createStore } from 'pinia';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\n\nimport axios from 'axios';\n",
   ), output);
 });
+
+test('side-effect-imports-last: moves bare imports after the other imports, keeps their order', async () => {
+  const src = [
+    "import './a.css';",
+    "import React from 'react';",
+    "import 'reflect-metadata';",
+    "import axios from 'axios';",
+    '',
+    'export { axios, React };',
+    '',
+  ].join('\n');
+  assert.ok((await ids(src)).includes('amuri/side-effect-imports-last'));
+  const { output } = await run(src, 'a.ts', true);
+  assert.ok(output.includes("import axios from 'axios';\nimport './a.css';\nimport 'reflect-metadata';\n"), output);
+  assert.ok(!(await ids(output)).includes('amuri/side-effect-imports-last'));
+});

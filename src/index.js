@@ -129,6 +129,8 @@ export const style = [
       'amuri/no-inline-type-specifier': 'error',
       // re-exports (export { } from '...') before local exports (export { })
       'amuri/reexports-before-local': 'error',
+      // side-effect imports (`import './x'`) after all other imports (auto-fix)
+      'amuri/side-effect-imports-last': 'error',
       // specifiers inside import { } / export { } sorted alphabetically (auto-fix)
       'amuri/sorted-specifiers': 'error',
       // `as const` constants are UPPER_SNAKE_CASE; UPPER_SNAKE_CASE object/array constants are `as const`

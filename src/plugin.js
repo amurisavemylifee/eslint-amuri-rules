@@ -13,6 +13,7 @@ import noInlineTypeSpecifier from './rules/no-inline-type-specifier.js';
 import paddingLineBetweenStatements from './rules/padding-line-between-statements.js';
 import preferShortAlias from './rules/prefer-short-alias.js';
 import reexportsBeforeLocal from './rules/reexports-before-local.js';
+import sideEffectImportsLast from './rules/side-effect-imports-last.js';
 import sortedSpecifiers from './rules/sorted-specifiers.js';
 import typeNamePrefix from './rules/type-name-prefix.js';
 import valueBeforeType from './rules/value-before-type.js';
@@ -34,6 +35,7 @@ export default {
     'padding-line-between-statements': paddingLineBetweenStatements,
     'prefer-short-alias': preferShortAlias,
     'reexports-before-local': reexportsBeforeLocal,
+    'side-effect-imports-last': sideEffectImportsLast,
     'sorted-specifiers': sortedSpecifiers,
     'type-name-prefix': typeNamePrefix,
     'value-before-type': valueBeforeType,
