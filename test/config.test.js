@@ -461,7 +461,7 @@ test('prefer-short-alias: most specific alias wins, auto-fix rewrites', async ()
   assert.equal(await fixed(wrap('react')), wrap('react'));
 });
 
-test('import/order: frameworks first, their ecosystem next, no blank lines between', async () => {
+test('import/order: frameworks first, their ecosystem next, blank line before other libraries', async () => {
   const src = [
     "import axios from 'axios';",
     "import path from 'node:path';",
@@ -477,6 +477,6 @@ test('import/order: frameworks first, their ecosystem next, no blank lines betwe
   ].join('\n');
   const { output } = await run(src, 'a.ts', true);
   assert.ok(output.startsWith(
-    "import fs from 'node:fs';\nimport path from 'node:path';\n\nimport React from 'react';\nimport { createApp } from 'vue';\nimport { createStore } from 'pinia';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\nimport axios from 'axios';\n",
+    "import fs from 'node:fs';\nimport path from 'node:path';\n\nimport React from 'react';\nimport { createApp } from 'vue';\nimport { createStore } from 'pinia';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\n\nimport axios from 'axios';\n",
   ), output);
 });
