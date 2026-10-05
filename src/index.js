@@ -99,7 +99,7 @@ export const style = [
       'import/order': [
         'error',
         {
-          groups: ['builtin', 'object', 'external', 'internal', 'parent', 'sibling', 'index'],
+          groups: ['builtin', 'object', 'external', 'internal', 'parent', ['sibling', 'index']],
           pathGroups: FRAMEWORK_PATH_GROUPS,
           pathGroupsExcludedImportTypes: ['builtin'],
           distinctGroup: false,
