@@ -468,16 +468,17 @@ test('import/order: frameworks first, their ecosystem next, blank line before ot
     "import fs from 'node:fs';",
     "import { useRouter } from 'vue-router';",
     "import { createApp } from 'vue';",
+    "import express from 'express';",
     "import { createRoot } from 'react-dom/client';",
     "import { createStore } from 'pinia';",
     "import React from 'react';",
     '',
-    'export { axios, createApp, createRoot, createStore, fs, path, React, useRouter };',
+    'export { axios, createApp, createRoot, createStore, express, fs, path, React, useRouter };',
     '',
   ].join('\n');
   const { output } = await run(src, 'a.ts', true);
   assert.ok(output.startsWith(
-    "import fs from 'node:fs';\nimport path from 'node:path';\n\nimport React from 'react';\nimport { createApp } from 'vue';\nimport { createStore } from 'pinia';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\n\nimport axios from 'axios';\n",
+    "import fs from 'node:fs';\nimport path from 'node:path';\n\nimport express from 'express';\nimport React from 'react';\nimport { createApp } from 'vue';\nimport { createStore } from 'pinia';\nimport { createRoot } from 'react-dom/client';\nimport { useRouter } from 'vue-router';\n\nimport axios from 'axios';\n",
   ), output);
 });
 

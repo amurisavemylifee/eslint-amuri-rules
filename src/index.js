@@ -47,7 +47,7 @@ const FRAMEWORKS = ['react', 'vue', 'express', 'svelte', 'next', 'nuxt', 'fastif
 
 // The framework block lives in its own group slot between builtin and external (the otherwise unused `object` group,
 // pathGroups need an existing group name), so a blank line separates it from other libraries.
-// One shared rank (brace pattern), so `alphabetize` sorts the ecosystem libraries among themselves.
+// Frameworks and ecosystem libraries each share one rank (brace pattern), so `alphabetize` sorts each of them A–Z.
 const FRAMEWORK_ECOSYSTEM = [
   'react-*', 'react-*/**', 'react/**', '@react-*/**', 'vue-*', 'vue-*/**', '@vue/**', 'vuex', 'pinia',
   'express-*', 'svelte/**', 'svelte-*', 'next/**', 'next-*', 'nuxt/**', '@nuxt/**', 'fastify-*',
@@ -55,7 +55,7 @@ const FRAMEWORK_ECOSYSTEM = [
 ];
 
 const FRAMEWORK_PATH_GROUPS = [
-  ...FRAMEWORKS.map((pattern) => ({ pattern, group: 'object', position: 'before' })),
+  { pattern: `{${FRAMEWORKS.join(',')}}`, group: 'object', position: 'before' },
   { pattern: `{${FRAMEWORK_ECOSYSTEM.join(',')}}`, group: 'object', position: 'before' },
   // path aliases (`@/x`, `~/x`) can't be told from packages without a resolver: put them in `internal`
   { pattern: '{@,~}/**', group: 'internal' },
